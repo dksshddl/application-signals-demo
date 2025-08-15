@@ -18,6 +18,7 @@ spec:
       serviceAccountName: visits-service-account
       containers:
         - image: 111122223333.dkr.ecr.us-west-2.amazonaws.com/python-petclinic-insurance-service:latest
+          imagePullPolicy: Always
           # securityContext:
           #   runAsNonRoot: true
           #   allowPrivilegeEscalation: true
