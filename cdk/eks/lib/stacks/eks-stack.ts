@@ -3,7 +3,7 @@ import { Construct } from 'constructs';
 import { StackProps, Stack, CfnJson, Fn, CfnWaitConditionHandle, CfnWaitCondition } from 'aws-cdk-lib';
 import { Vpc, InstanceType, ISecurityGroup,SecurityGroup, Port } from 'aws-cdk-lib/aws-ec2';
 import { Role, RoleProps, PolicyStatement, FederatedPrincipal, Effect } from 'aws-cdk-lib/aws-iam';
-import { CfnAddon, Cluster, KubernetesManifest, KubernetesVersion, ServiceAccount, KubernetesObjectValue, Nodegroup } from 'aws-cdk-lib/aws-eks';
+import { CfnAddon, Cluster, KubernetesManifest, KubernetesVersion, ServiceAccount, KubernetesObjectValue, Nodegroup, AccessPolicy, AccessScopeType, AuthenticationMode } from 'aws-cdk-lib/aws-eks';
 import { StringParameter } from 'aws-cdk-lib/aws-ssm';
 import { KubectlV31Layer } from '@aws-cdk/lambda-layer-kubectl-v31';
 
@@ -122,7 +122,8 @@ export class EksStack extends Stack {
       defaultCapacity: 0,
       // Make sure this version matches the this.clusterKubernetesVersion
       kubectlLayer: new KubectlV31Layer(this, 'kubectl'),
-      tags: {"awsApplication": awsApplicationTag}
+      tags: {"awsApplication": awsApplicationTag},
+      authenticationMode: AuthenticationMode.API_AND_CONFIG_MAP,
     });
 
     // Retrieve the latest node group ami. This will ensure that the ami doesn't expire for long live instances
@@ -148,6 +149,7 @@ export class EksStack extends Stack {
         Port.tcp(5432),
         'Allow EKS to connect to RDS'
     )
+
     return cluster;
   }
 
